@@ -11,9 +11,9 @@ SERVICES = {
 
 #Creates the rules in a temporary file which will then be written to the final file later
 def writeRule(team, pathToFile):
-    print("Welcome to rule writer!")
+    print("\nWelcome to rule writer!")
     print("You will be prompted to enter the ip, hostname, scored services, and any additional ports to allow.")
-    print("To quit, type quit.")
+    print("To quit, type quit.\n")
 
     IP = input("Enter IP of machine (or quit): ")
 
@@ -31,11 +31,15 @@ def writeRule(team, pathToFile):
         portString = ""
 
         #Write the rule for each port
-        with open(pathToFile, "w") as file:
+        with open(pathToFile, "a") as file:
             file.write("\n")
             for port in allowedPorts:
                 portString += port + ", "
-                file.write("#" + hostname + "(" + OS + ") - " + IP + " on " + port + "\n")
+                try:
+                    recognizedPort = "[" + SERVICES[int(port)] + "]"
+                except(KeyError):
+                    recognizedPort = ""
+                file.write("#" + hostname + "(" + OS + ") - " + IP + " on " + port + recognizedPort + "\n")
                 file.write("pass in quick proto { tcp udp } from any to " + IP + " port { " + port.strip() + " }" + "\n")
 
         #Add to topology
